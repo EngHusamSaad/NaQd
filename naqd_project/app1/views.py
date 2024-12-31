@@ -1,7 +1,11 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse,redirect
 from .models import *
 from django.http import JsonResponse
 import json
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
+from django.contrib.auth.models import Customer
 
 
 
@@ -118,3 +122,31 @@ def customers_view(request):
     except Exception as e:
         print(f"Error fetching customers: {e}")
         return JsonResponse({'error': 'Failed to retrieve customers'}, status=500)
+    
+
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        password = request.POST['password']
+        
+        # Check if email exists in the User model
+        try:
+            user = Customer.objects.get(email=email)
+        except Customer.DoesNotExist:
+            user = None
+        
+        if user is not None:
+            # Authenticate the user using the email and password
+            user = authenticate(request, username=user.username, password=password)
+            
+            if user is not None:
+                login(request, user)  # Login the user
+                return redirect('/main')  # Redirect to a home page or dashboard
+            else:
+                error_message = "Invalid password"
+        else:
+            error_message = "Invalid email address"
+        
+        return render(request, 'app1/login.html', {'error_message': error_message})
+    
+    return render(request, 'app1/login.html')

@@ -16,7 +16,7 @@ urlpatterns = [
     path('add_debts/', views.add_debts, name='add_debts'),
     
     
-    
+     path('login/', views.login_view, name='login'),
     
     
     
