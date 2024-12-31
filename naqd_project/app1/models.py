@@ -49,7 +49,7 @@ class Cheque(models.Model):
     deposite_date=models.DateTimeField()
     amount_cheque=models.FloatField()
     status_cheque=models.BooleanField(default=False)
-    payment=models.ForeignKey(Debt,related_name="cheques", on_delete=models.CASCADE, null=False, blank=False)
+    payment=models.ForeignKey(Paymnet, related_name="cheques", on_delete=models.CASCADE, null=False, blank=False)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 

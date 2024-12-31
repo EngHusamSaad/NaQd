@@ -5,7 +5,8 @@ import json
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from django.contrib.auth.models import Customer
+from .models import Customer
+
 
 
 
