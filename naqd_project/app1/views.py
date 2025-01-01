@@ -71,6 +71,25 @@ def debts_list(request):
     ]
     return JsonResponse(data, safe=False)
 
+def payments_api(request):
+
+    payments = Paymnet.objects.all().select_related('debt__customer')
+    payments_data = [
+        {
+            'id': payment.id,
+            'payment_type': payment.payment_type,
+            'amount_payment': payment.amount_payment,
+            'customer_name': f"{payment.debt.customer.first_name} {payment.debt.customer.second_name}",
+            'customer_email': payment.debt.customer.email,
+            'created_at': payment.created_at.date(),
+            'total_debt' :payment.debt.amount_debt,
+            'amount_remain' :payment.debt.amount_debt - payment.amount_payment
+        }
+        for payment in payments
+    ]
+    
+    return JsonResponse(payments_data, safe=False)
+
 
 
 def select_customer(request):
@@ -146,17 +165,18 @@ def customers_view(request):
         return JsonResponse({'error': 'Failed to retrieve customers'}, status=500)
     
 
-def login_view(request):
-    if request.method == "POST":
-        email = request.POST['email']
-        password = request.POST['password']
+# def login_view(request):
+#     # if request.method == "POST":
+#     #     email = request.POST['email']
+#     #     password = request.POST['password']
         
-        # Check if email exists in the User model
-        try:
-            user = Customer.objects.get(email=email)
-        except Customer.DoesNotExist:
-            user = None
+#     #     # Check if email exists in the User model
+#     #     try:
+#     #         user = Customer.objects.get(email=email)
+#     #     except Customer.DoesNotExist:
+#     #         user = None
         
+
         if user is not None:
             # Authenticate the user using the email and password
             user = authenticate(request, email=email, password=password)
