@@ -5,7 +5,8 @@ import json
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .models import Customer
+from .models import Customer,Debt,Paymnet,Cheque
+import bcrypt
 
 
 
@@ -16,7 +17,27 @@ def login(request):
 
 
 def register(request):
-    return render(request,"registration.html")
+  if request.POST:
+    errors = Customer.objects.basic_validate(request.POST)
+    if len(errors)>0:
+      for key,value in errors.items():
+        messages.error(request,value)
+      return redirect('/register')
+    else:
+      password=request.POST['password']
+      hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+      Customer.objects.create(first_name=request.POST['first_name'],
+                          second_name=request.POST['second_name'],
+                          email=request.POST['email'],
+                          identity=request.POST['identity'],
+                          address=request.POST['address'],
+                          mobile=request.POST['mobile'],
+                          password = hash
+                          )
+      
+      request.session ['first_name']=request.POST['first_name']
+      return redirect('/home')
+  return render(request, 'registration.html')
 
 
 def main(request):
@@ -138,16 +159,36 @@ def login_view(request):
         
         if user is not None:
             # Authenticate the user using the email and password
-            user = authenticate(request, username=user.username, password=password)
+            user = authenticate(request, email=email, password=password)
             
             if user is not None:
                 login(request, user)  # Login the user
-                return redirect('/main')  # Redirect to a home page or dashboard
+                return redirect('/home')  # Redirect to a home page or dashboard
             else:
                 error_message = "Invalid password"
         else:
             error_message = "Invalid email address"
         
-        return render(request, 'app1/login.html', {'error_message': error_message})
+        return render(request, 'home.html', {'error_message': error_message})
     
-    return render(request, 'app1/login.html')
+    return render(request, 'home.html')
+
+def home(request):
+    return render(request,"home.html")
+
+def logout_view(request):
+        return redirect('/') 
+
+def customer_summary(request):
+    # Get all customers with their debts and cheques
+    customers = Customer.objects.all()
+    debts = Debt.objects.all()
+    cheques = Cheque.objects.all()
+
+    data = {
+        'customers': customers,
+        'debts': debts,
+        'cheques': cheques,
+    }
+
+    return render(request, 'home.html', data)
