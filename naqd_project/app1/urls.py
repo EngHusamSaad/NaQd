@@ -5,9 +5,10 @@ urlpatterns = [
     path('', views.login),   
     path('register', views.register), 
     path('main', views.main,name="main"),
+    
     path('api/customers/', views.customers_list, name='customers-list'),
     path('api/debts/', views.debts_list, name='debts-list'),
-    
+    path('api/payments/', views.payments_api, name='payments_api'),
     
     
     
@@ -17,7 +18,7 @@ urlpatterns = [
     path('add_debts/', views.add_debts, name='add_debts'),
     
     
-    path('login/', views.login_view, name='login'),
+    # path('login', views.login_view, name='login'),
     
 
 ]
