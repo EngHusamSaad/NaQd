@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="row">
+          <!-- الرسم البياني الأول -->
+          <div class="col-md-6">
+            <canvas id="chart1"></canvas>
+          </div>
+          <!-- الرسم البياني الثاني -->
+          <div class="col-md-6">
+            <canvas id="chart2"></canvas>
+          </div>
+        </div>
+      </div>
+
+
+    
+</body>
+
+<script>
+    // الرسم البياني الأول - بيانات ثابتة
+    const ctx1 = document.getElementById('chart1').getContext('2d');
+    const chart1 = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: 'الإيرادات الشهرية',
+                data: {{ values|safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+  
+    // الرسم البياني الثاني - بيانات من API
+    fetch('/chart-data/')
+      .then(response => response.json())
+      .then(data => {
+          const ctx2 = document.getElementById('chart2').getContext('2d');
+          const chart2 = new Chart(ctx2, {
+              type: 'scatter',
+              data: {
+                  labels: data.labels,
+                  datasets: [{
+                      label: 'الديون لكل زبون',
+                      data: data.values,
+                      backgroundColor: ['red', 'blue', 'green', 'yellow'],
+                      
+                  }]
+              },
+              options: {
+                responsive: true,  // استجابة للرسم البياني
+                plugins: {
+                    legend: {
+                        position: 'top',  // وضع الأسطورة في الأعلى
+                    },
+                    tooltip: {
+                        enabled: true,  // تمكين التلميحات عند التمرير بالفأرة
+                    }
+                }
+          });
+      });
+  </script>
+  
+</html>

@@ -265,3 +265,17 @@ def chart_data_2(request):
     values = [payment['total_payments'] for payment in payments]
 
     return JsonResponse({'labels': labels, 'values': values})
+
+
+def latest_customers(request):
+    customers = Customer.objects.all().order_by('-created_at')[:5]
+    customer_data = [
+        {
+            'id': customer.id,
+            'name': f"{customer.first_name} {customer.second_name}",
+            'mobile':customer.mobile,
+            'created_at': customer.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for customer in customers
+    ]
+    return JsonResponse(customer_data, safe=False)

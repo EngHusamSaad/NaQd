@@ -30,24 +30,23 @@
 
       .actions {
         display: flex;
-
         justify-content: space-evenly;
       }
 
       #grid-container {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* تقسيم لعمودين */
-        grid-template-rows: 1fr 1fr; /* تقسيم لصفين */
-        gap: 20px; /* المسافة بين الرسوم البيانية */
-        height: 80vh; /* ارتفاع مناسب للحاوية */
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr 1fr; 
+        gap: 20px; 
+        height: 80vh; 
       }
 
       .chart-box {
         padding: 10px;
-        border: 1px solid #ddd; /* حدود خفيفة */
-        border-radius: 8px; /* زوايا دائرية */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* ظل خفيف */
-        background: #fff; /* خلفية بيضاء */
+        border: 1px solid #ddd;
+        border-radius: 8px; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        background: #fff; 
       }
     </style>
   </head>
@@ -346,9 +345,9 @@
                 "<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th></tr></thead><tbody>";
               add_button =
                 ' <a href="/register" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>';
-              data.forEach((customer) => {
+              data.forEach((customer,index) => {
                 content += `<tr>
-                                        <td>${customer.id}</td>
+                                        <td>${index+1}</td>
                                         <td>${customer.first_name} ${customer.second_name}</td>
                                         <td>${customer.email}</td>
                                         <td>${customer.mobile}</td>
@@ -375,9 +374,9 @@
                 '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal"  data-bs-target="#customerModal" data-id="${debt.id}">  Add Debts  </button>';
               // ' <a href="/add_debts" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Debts</a>'
 
-              data.forEach((debt) => {
+              data.forEach((debt,index) => {
                 content += `<tr>
-                    <td>${debt.id}</td>
+                    <td>${index+1}</td>
                     <td>${debt.amount_debt}</td>
                     <td>${debt.status_debt ? "Paid" : "Unpaid"}</td>
                     <td>${debt.customer_name}</td>
@@ -419,11 +418,11 @@
               content +=
                 "<thead><tr><th>ID</th><th>Payment Type</th><th>Payment Amount</th><th>Customer Name</th><th>Created At</th><th>Total Debt Amount</th><th>Remaining Debt</th><th>Actions</th></tr></thead><tbody>";
 
-              data.forEach((payment) => {
+              data.forEach((payment,index) => {
                 add_buton = `<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal" data-bs-target="#paymentModal" data-id="${payment.id}"> Add Payment </button>`;
                 content += `
                                 <tr>
-                                    <td>${payment.id}</td>
+                                    <td>${index+1}</td>
                                     <td>${payment.payment_type}</td>
                                     <td>${payment.amount_payment}</td>
                                     <td>${payment.customer_name}</td>
@@ -469,7 +468,7 @@
             gridContainer.id = "grid-container";
             content.appendChild(gridContainer);
 
-            for (let i = 1; i <= 2; i++) {
+            for (let i = 1; i <= 3; i++) {
               const chartContainer = document.createElement("div");
               chartContainer.className = "chart-box";
               const chartCanvas = document.createElement("canvas");
@@ -502,6 +501,21 @@
                     },
                     options: {
                       responsive: true,
+                      maintainAspectRatio: false, // السماح بتعديل الحجم
+                      aspectRatio: i === 2 ? 1 : 2, // تصغير الحجم للرسم البياني الثاني
+                      plugins: {
+                        title: {
+                          display: i === 2, 
+                          text: i === 1 ? "Debts Chart" : "Payment Chart",
+                          font: {
+                            size: 18, 
+                            weight: "bold", 
+                          },
+                          padding: {
+                            top: 20,
+                          },
+                        },
+                      },
                       
                     },
                   });
@@ -510,7 +524,62 @@
                   console.error("خطأ:", error);
                   alert(`حدث خطأ أثناء تحميل بيانات الرسم البياني ${i}!`);
                 });
-            }
+            } const tableContainer = document.createElement("div");
+            tableContainer.className = "table-responsive mt-4 chart-box";
+
+            const tableTitle = document.createElement("h4");
+            tableTitle.className = "mb-3";  
+            tableTitle.textContent = "Latest Customers";  
+            tableTitle.style.textAlign = "center";
+            
+            tableTitle.style.padding = "10px";
+
+            tableContainer.appendChild(tableTitle);
+
+
+            const table = document.createElement("table");
+            table.className = "table table-striped table-bordered "; // تنسيق الجدول باستخدام فئات Bootstrap
+            table.innerHTML = `
+              <thead class="thead-dark">
+                <tr>
+                  <th>Customer ID</th>
+                  <th>Customer Name</th>
+                  <th>Customer Mobile</th>
+                  <th>Added Date</th>
+                </tr>
+              </thead>
+              <tbody id="customers-table-body">
+              </tbody>
+              
+            `;
+            tableContainer.appendChild(table);
+            gridContainer.appendChild(tableContainer);
+      
+            fetch('/latest-customers/')
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("فشل في جلب بيانات الزبائن!");
+                }
+                return response.json();
+              })
+              .then((customers) => {
+                const tableBody = document.getElementById("customers-table-body");
+                customers.forEach((customer,index) => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                    <td>${index+1}</td>
+                    <td>${customer.name}</td>
+                    <td>${customer.mobile}</td>
+                    <td>${customer.created_at}</td>
+                  `;
+                  tableBody.appendChild(row);
+                });
+              })
+              .catch((error) => {
+                console.error("خطأ في جلب بيانات الزبائن:", error);
+                alert("حدث خطأ أثناء تحميل بيانات الزبائن!");
+              });
+      
           }, 500);
         });
 
@@ -554,7 +623,6 @@
           var itemId = button.getAttribute("data-id");
           document.getElementById("item_id_modal").value = itemId;
 
-          // استعلام للحصول على العملاء من الخادم
           fetch(`/customers_view`)
             .then((response) => response.json())
             .then((data) => {

@@ -32,4 +32,6 @@ urlpatterns = [
     path('chart-data-2/', views.chart_data_2, name='chart_data_2'),
     # path('chart-data-3/', views.chart_data_3, name='chart_data_3'),
     # path('chart-data-4/', views.chart_data_4, name='chart_data_4'),
+    path('latest-customers/', views.latest_customers, name='latest_customers'),  # نقطة النهاية لجلب آخر الزبائن
+
 ]
