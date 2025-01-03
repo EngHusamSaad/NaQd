@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add New Customer</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'CSS/registration.css' %}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="sign">
+      <h1>Add New Customer</h1>
+      <form action="register" method="post">
+        {%csrf_token%}
+        <div class="row mb-3">
+          <label for="ID" class="col-sm-2 col-form-label">ID</label>
+          <div class="col-sm-5">
+            <input
+              name="ID"
+              type="number"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="_name" class="col-sm-2 col-form-label"> Name</label>
+          <div class="col-sm-5">
+            <input
+              name="name"
+              type="name"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="identity" class="col-sm-2 col-form-label">Identity</label>
+          <div class="col-sm-5">
+            <input
+              name="identity"
+              type="identity"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="phone" class="col-sm-2 col-form-label"
+            >Phone number</label
+          >
+          <div class="col-sm-5">
+            <input
+              name="phone"
+              type="number"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="address" class="col-sm-2 col-form-label">Address</label>
+          <div class="col-sm-5">
+            <input
+              name="address"
+              type="text"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="email" class="col-sm-2 col-form-label">Email</label>
+          <div class="col-sm-5">
+            <input
+              name="email"
+              type="email"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label for="password" class="col-sm-2 col-form-label">Password</label>
+          <div class="col-sm-5">
+            <input
+              name="password"
+              type="password"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="confirm_passwoerd" class="col-sm-2 col-form-label"
+            >Confirm Password</label
+          >
+          <div class="col-sm-5">
+            <input
+              name="confirm_password"
+              type="confirm_password"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label for="file" class="col-sm-2 col-form-label">Browse Photo</label>
+          <div class="col-sm-5">
+            <input
+              type="file"
+              name="file"
+              id="file"
+              class="form-control sign-input"
+            /><br />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sign up</button>
+
+        
+
+      </form>
+    </div>
+    <div class="add_customer">
+      
+      <img src="{% static 'img/add_customer.png' %}" alt="logo"  />
+      
+    </div>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    
+    
+    
+}
+.sign{
+    width: 65%;
+    height: 100%;
+    margin: 30px;
+    align-self: center;
+    margin: auto;
+    margin-top: 15px;
+
+   
+
+}
+.profile-pic{
+    width: 90px;
+    height: 90px;
+}
+.add_customer{
+    width: 30%;
+    position: absolute;
+    top: 11%;
+    left: 55%;
+}
+
+
