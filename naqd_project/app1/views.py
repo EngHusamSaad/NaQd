@@ -7,6 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .models import Customer,Debt,Paymnet,Cheque
 import bcrypt
+from django.db.models import Sum
+
 
 
 
@@ -122,7 +124,7 @@ def add_debts(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print('Received data:', data)  # للتشخيص
+            print('Received data:', data)  # 
             
             customer_id = data.get('customer_id')
             debt_amount = data.get('debtamount')
@@ -147,7 +149,6 @@ def add_debts(request):
             print('Error:', str(e))  # للتشخيص
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'طلب غير صالح'})
-
 
 
 def customers_view(request):
@@ -205,7 +206,6 @@ def customer_summary(request):
 
     return render(request, 'home.html', data)
 
-
 def add_payment(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -225,3 +225,15 @@ def add_payment(request):
             response = {'success': False, 'error': 'Customer not found'}
 
         return JsonResponse(response)
+
+
+def chart_data(request):
+    # جلب المبالغ الإجمالية لكل زبون
+    debts = Debt.objects.values('customer__first_name', 'customer__second_name').annotate(total_debt=Sum('amount_debt'))
+
+    # إنشاء البيانات المطلوبة
+    labels = [f"{debt['customer__first_name']} {debt['customer__second_name']}" for debt in debts]
+    values = [debt['total_debt'] for debt in debts]
+
+    # إرجاع البيانات بتنسيق JSON
+    return JsonResponse({'labels': labels, 'values': values})
