@@ -558,16 +558,13 @@
           fetch(`/customers_view`)
             .then((response) => response.json())
             .then((data) => {
-              console.log("Data from server:", data); // تحقق من البيانات المستلمة
               if (data.error) {
                 alert(data.error);
               } else {
                 let customerSelect = document.getElementById("customerSelect");
-                customerSelect.innerHTML = "";
+                customerSelect.innerHTML = `<option value="" disabled selected>Select a customer</option>`;
                 data.forEach((customer) => {
-                  console.log("Customer:", customer);
                   var option = document.createElement("option");
-                  console.log("option: ", option);
                   option.value = customer.id;
                   option.textContent = `${customer.first_name} ${customer.second_name}`;
                   customerSelect.appendChild(option);
