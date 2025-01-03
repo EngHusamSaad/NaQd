@@ -13,24 +13,6 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
-    
-class CustomerManager (models.Manager):
-    def basic_validate(self,postData):
-        errors = {}
-        if len(postData['first_name']) < 2:
-            errors["first_name"] = "First name should be at least 2 characters"
-        if len(postData['second_name']) < 2:
-            errors["second_name"] = "last name should be at least 2 characters"
-        EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if not EMAIL_REGEX.match(postData['email']):
-            errors['email']="invalid email" 
-        if not postData ['password']:
-            errors ['password'] = "Enter password"
-        else: 
-            
-            if len(postData['password']) < 4:
-                errors["password"] = "Password should be at least 4 characters"
-        return errors
 
 class Customer(models.Model):
         photo=models.ForeignKey(Document, on_delete=models.CASCADE, null=True, blank=True)
@@ -43,10 +25,10 @@ class Customer(models.Model):
         mobile=models.IntegerField()
         created_at=models.DateTimeField(auto_now_add=True)
         updated_at=models.DateTimeField(auto_now=True)
-        objects = CustomerManager()
 
 
 class Debt(models.Model):
+    
     status_debt=models.BooleanField(default=False)
     notes=models.TextField()
     amount_debt=models.FloatField()

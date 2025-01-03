@@ -124,7 +124,7 @@ def add_debts(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print('Received data:', data)  # 
+            print('Received data:', data) 
             
             customer_id = data.get('customer_id')
             debt_amount = data.get('debtamount')
@@ -158,6 +158,27 @@ def customers_view(request):
     except Exception as e:
         print(f"Error fetching customers: {e}")
         return JsonResponse({'error': 'Failed to retrieve customers'}, status=500)
+
+def debt_view(request):
+    customer_id = request.GET.get('customer_id')
+    try:
+        debts = Debt.objects.filter(customer_id=customer_id)
+        
+        debt_data = [
+        {
+            'id': debt.id,
+            'amount_debt': debt.amount_debt,
+            'notes': debt.notes,
+        }
+        for debt in debts
+    ]
+
+        return JsonResponse(debt_data, safe=False)
+    except Exception as e:
+        print(f"Error fetching customers: {e}")
+        return JsonResponse({'error': 'Failed to retrieve debts'}, status=500)
+    
+    
 
 def login_view(request):
     if request.method == "POST":
@@ -212,11 +233,13 @@ def add_payment(request):
         customer_id = data.get('customer_id')
         payment_amount = data.get('payment_amount')
         payment_type = data.get('payment_type')
+        debt_id = data.get('debt_id')
 
         try:
             customer = Customer.objects.get(id=customer_id)
-            payment = Payment.objects.create(
-                customer=customer,
+            debt = Debt.objects.get(id=debt_id)
+            payment = Paymnet.objects.create(
+                debt=debt,
                 amount_payment=payment_amount,
                 payment_type=payment_type,
             )
@@ -227,13 +250,18 @@ def add_payment(request):
         return JsonResponse(response)
 
 
-def chart_data(request):
-    # جلب المبالغ الإجمالية لكل زبون
+def chart_data_1(request):
     debts = Debt.objects.values('customer__first_name', 'customer__second_name').annotate(total_debt=Sum('amount_debt'))
-
-    # إنشاء البيانات المطلوبة
     labels = [f"{debt['customer__first_name']} {debt['customer__second_name']}" for debt in debts]
     values = [debt['total_debt'] for debt in debts]
+    
+    return JsonResponse({'labels': labels, 'values': values})
 
-    # إرجاع البيانات بتنسيق JSON
+
+def chart_data_2(request):
+    payments = Paymnet.objects.values('debt__customer__first_name', 'debt__customer__second_name').annotate(total_payments=Sum('amount_payment'))
+
+    labels = [f"{payment['debt__customer__first_name']} {payment['debt__customer__second_name']}" for payment in payments]
+    values = [payment['total_payments'] for payment in payments]
+
     return JsonResponse({'labels': labels, 'values': values})
