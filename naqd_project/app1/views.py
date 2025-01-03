@@ -11,10 +11,8 @@ import bcrypt
 
 
 
-
 def login(request):
     return render(request,"login.html")
-
 
 def register(request):
   if request.POST:
@@ -120,10 +118,6 @@ def select_customer(request):
     #         return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-
-
-
-
 def add_debts(request):
     if request.method == 'POST':
         try:
@@ -163,20 +157,18 @@ def customers_view(request):
     except Exception as e:
         print(f"Error fetching customers: {e}")
         return JsonResponse({'error': 'Failed to retrieve customers'}, status=500)
-    
 
-# def login_view(request):
-#     # if request.method == "POST":
-#     #     email = request.POST['email']
-#     #     password = request.POST['password']
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        password = request.POST['password']
         
-#     #     # Check if email exists in the User model
-#     #     try:
-#     #         user = Customer.objects.get(email=email)
-#     #     except Customer.DoesNotExist:
-#     #         user = None
+        # Check if email exists in the User model
+        try:
+            user = Customer.objects.get(email=email)
+        except Customer.DoesNotExist:
+            user = None
         
-
         if user is not None:
             # Authenticate the user using the email and password
             user = authenticate(request, email=email, password=password)
@@ -212,3 +204,24 @@ def customer_summary(request):
     }
 
     return render(request, 'home.html', data)
+
+
+def add_payment(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        customer_id = data.get('customer_id')
+        payment_amount = data.get('payment_amount')
+        payment_type = data.get('payment_type')
+
+        try:
+            customer = Customer.objects.get(id=customer_id)
+            payment = Payment.objects.create(
+                customer=customer,
+                amount_payment=payment_amount,
+                payment_type=payment_type,
+            )
+            response = {'success': True}
+        except Customer.DoesNotExist:
+            response = {'success': False, 'error': 'Customer not found'}
+
+        return JsonResponse(response)
