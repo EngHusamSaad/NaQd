@@ -26,13 +26,17 @@ def register(request):
     else:
       password=request.POST['password']
       hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+      photo = request.FILES.get('photo') 
+
       Customer.objects.create(first_name=request.POST['first_name'],
                           second_name=request.POST['second_name'],
                           email=request.POST['email'],
                           identity=request.POST['identity'],
                           address=request.POST['address'],
                           mobile=request.POST['mobile'],
-                          password = hash
+                          password = hash,
+                          photo=photo,
                           )
       
       request.session ['first_name']=request.POST['first_name']
@@ -42,6 +46,9 @@ def register(request):
 
 def main(request):
     return render(request,"main.html")
+
+def about(request):
+    return render(request,"about.html")
 
 
 def customers_list(request):
@@ -197,6 +204,11 @@ def login_view(request):
             
             if user is not None:
                 login(request, user)  # Login the user
+
+                # Check if the email is the special email
+                if email == "naqd@gmail.com":
+                    return redirect('/admin/')  # Redirect to the Django admin page
+                
                 return redirect('/home')  # Redirect to a home page or dashboard
             else:
                 error_message = "Invalid password"
@@ -204,8 +216,12 @@ def login_view(request):
             error_message = "Invalid email address"
         
         return render(request, 'home.html', {'error_message': error_message})
+    data = {
+        "first_name": request.session.get('first_name', ''),
+        "second_name": request.session.get('second_name', '')
+    }
     
-    return render(request, 'home.html')
+    return render(request, 'home.html',data)
 
 def home(request):
     return render(request,"home.html")
