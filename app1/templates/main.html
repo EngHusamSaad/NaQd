@@ -203,23 +203,56 @@
                 .then(data => {
                     let content = '<table class="table table-striped">';
                     content += '<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th></tr></thead><tbody>';
-                    add_button = ' <a href="/add_Customer" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>'
+                    add_button = ' <a href="/add_Customer" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>';
                     data.forEach(customer => {
                         content += `<tr>
-                                    <td>${customer.id}</td>
-                                    <td>${customer.first_name} ${customer.second_name}</td>
-                                    <td>${customer.email}</td>
-                                    <td>${customer.mobile}</td>
-                                </tr>`;
+                            <td>${customer.id}</td>
+                            <td>${customer.first_name} ${customer.second_name}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.mobile}</td>
+                            <td>
+                    <div class="actions">
+                        <button type="button" class="btn btn-primary"  data-bs-toggle="modal"
+                            data-bs-target="#exampleModal" data-id="${customer.id}">
+                            Edit
+                        </button>
+
+                        <button type="button" class="btn btn-danger" onclick="deleteCustomer(${customer.id})">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+                            </tr>`;
                     });
                     content += '</tbody></table>';
                     document.getElementById('content').innerHTML = add_button + content;
-                    document.getElementById('head_title').textContent = 'Customer';
-
-
-
                 });
         });
+
+        function deleteCustomer(customerId) {
+            if (confirm('Are you sure you want to delete this customer?')) {
+                fetch(`/api/customers/delete/${customerId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === 'Customer deleted successfully') {
+                            alert('Customer deleted successfully');
+                            // Reload the customer list after deletion
+                            document.getElementById('customers-link').click();
+                        } else {
+                            alert('Failed to delete customer');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting customer:', error);
+                        alert('Error deleting customer');
+                    });
+            }
+        }
 
         //View_Debts_by_Fetch
         document.getElementById('debts-link').addEventListener('click', function () {
