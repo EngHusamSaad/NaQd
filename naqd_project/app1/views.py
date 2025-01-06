@@ -270,12 +270,25 @@ def add_payment(request):
         try:
             customer = Customer.objects.get(id=customer_id)
             debt = Debt.objects.get(id=debt_id)
-            payment = Paymnet.objects.create(
-                debt=debt,
-                amount_payment=payment_amount,
-                payment_type=payment_type,
-            )
-            response = {'success': True}
+            print(type(debt.amount_debt))
+            print(type(float(payment_amount)))
+            
+            print((debt.amount_debt))
+            print((float(payment_amount)))
+            
+            # print(debt.amount_debt)
+            if debt.amount_debt>=float(payment_amount):
+                payment = Paymnet.objects.create(
+                    debt=debt,
+                    amount_payment=payment_amount,
+                    payment_type=payment_type,
+                    
+                )
+                response = {'success': True}
+            else:
+                print("in if create")
+                response = {'success': False, 'error': 'Payemnt Amount is large of Debt Amount !!!'}   
+            
         except Customer.DoesNotExist:
             response = {'success': False, 'error': 'Customer not found'}
 

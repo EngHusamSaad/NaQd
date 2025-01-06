@@ -135,7 +135,7 @@
       aria-labelledby="customerModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog" >
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="customerModalLabel">Select Customer</h5>
@@ -510,7 +510,7 @@
             .then((data) => {
               let content = '<table class="table table-striped">';
               content +=
-                "<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th></tr></thead><tbody>";
+                "<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Actions</th></tr></thead><tbody>";
               add_button =
                 ' <a href="/register" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>';
               data.forEach((customer, index) => {
@@ -546,10 +546,13 @@
             });
         });
 
+
+        document.getElementById("debts-link").addEventListener("click", function() {
+          loaddebtspage();
+        });
+
       //View_Debts_by_Fetch
-      document
-        .getElementById("debts-link")
-        .addEventListener("click", function () {
+     function loaddebtspage () {
           fetch("/api/debts/")
             .then((response) => response.json())
             .then((data) => {
@@ -591,7 +594,7 @@
                 add_button + content;
               document.getElementById("head_title").textContent = "Debts";
             });
-        });
+        }
 
       //View_Payments_by_Fetch
       document
@@ -602,7 +605,7 @@
             .then((data) => {
               let content = '<table class="table table-striped">';
               content +=
-                "<thead><tr><th>ID</th><th>Payment Type</th><th>Payment Amount</th><th>Customer Name</th><th>Created At</th><th>Total Debt Amount</th><th>Remaining Debt1111</th><th>Actions</th></tr></thead><tbody>";
+                "<thead><tr><th>ID</th><th>Payment Type</th><th>Payment Amount</th><th>Customer Name</th><th>Created At</th><th>Total Debt Amount</th><th>Remaining Debt</th><th>Actions</th></tr></thead><tbody>";
 
               add_button =
                 '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal" data-bs-target="#paymentModal" data-id="${payment.id}"> Add Payment </button>';
@@ -656,7 +659,6 @@
       });
       
       function loadDashboard() {
-         
             const content = document.getElementById("content");
             if (!content) {
               alert("المحتوى غير موجود!");
@@ -872,6 +874,8 @@
             });
         });
 
+        
+
       //add_debts_by_modal
       document
         .querySelector("#add_debts")
@@ -907,7 +911,8 @@
             .then((data) => {
               if (data.success) {
                 alert("Debt was updated successfully!");
-                location.reload(); // إعادة تحميل الصفحة بعد التحديث
+                location.reload();
+                loaddebtspage();
               } else {
                 alert("Failed to update item! Error: " + data.error); // إضافة تفاصيل الخطأ
               }
@@ -948,12 +953,12 @@
                 alert("Payment was added successfully!");
                 location.reload(); // إعادة تحميل الصفحة بعد التحديث
               } else {
-                alert("Failed to add payment!");
+                alert(data.error);
               }
             })
             .catch((error) => {
               console.error("Error adding payment:", error);
-              alert("Failed to add payment!");
+              alert("Failed to add payment!"+ error.message);
             });
         });
 
