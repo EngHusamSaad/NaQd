@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naqd-Financial Mgt. System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-sm navbar-light  naqd-bar1">
+    <div class="container  naqd-bar2 ">
+        
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="navbar-brand" href="/">NaQd</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="navbar-brand" href="about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="register">Sign up</a>
+                </li>
+            </ul>
+        
+    </div>
+</nav>
+
+<body class="main">
+    <div class="container login-page">
+        <div class="logo">
+            <img src="{% static 'img/logo.png' %}" alt="logo" class="logologin" />
+        </div>
+        <div class="container sign">
+            <div class="row justify-content-center" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h4>Login</h4>
+                        </div>
+                        <div class="card-body">
+
+                            <form action="login_view" method="POST">
+                                {% csrf_token %}
+
+                                <!-- Email Input -->
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="text" class="form-control sign-input" id="email" name="email"
+                                        placeholder="Enter your email">
+                                </div>
+
+                                <!-- Password Input -->
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control sign-input" id="password" name="password"
+                                        placeholder="Enter your password">
+                                </div>
+
+                                <!-- Error Message (if any) -->
+                                {% if error_message %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error_message }}
+                                </div>
+                                {% endif %}
+
+                                <!-- Login Button -->
+                                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+    </div>
+</body>
+<footer class="text-center mt-5">
+    <p>&copy; 2024 . © All rights reserved. By HFY Group</p>
+</footer>
+
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+</html>

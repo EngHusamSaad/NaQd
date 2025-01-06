@@ -1,0 +1,54 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    
+}
+.naqd-bar1{
+    background-color: #aeccc4;
+    margin: 0;
+    padding: 0;
+}
+
+.naqd-bar2>ul{
+    width: 100%;
+    height: 45px;
+    padding: 0px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 3px double black; 
+}
+body{
+    width: 100%;
+    height: 740px;
+    background-color: #aeccc4;   
+}
+.main{
+    width: 100%;
+    height: 90%;
+    position: relative;
+    background-color: #aeccc4;
+}
+.sign{
+    width: 65%;
+    height: 100%;
+    margin: 30px;
+    align-self: center;
+    margin: auto;
+
+}
+.profile-pic{
+    width: 90px;
+    height: 90px;
+
+}
+.add_customer{
+    width: 30%;
+    position: absolute;
+    top: 11%;
+    left: 55%;
+
+}
+
+
