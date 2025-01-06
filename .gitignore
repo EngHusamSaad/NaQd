@@ -1,0 +1,8 @@
+myenv/
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+
+# Ignore database files
+*.sqlite3
