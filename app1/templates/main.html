@@ -26,8 +26,52 @@
 
         .actions {
             display: flex;
-
             justify-content: space-evenly;
+        }
+
+        /* Adjust sidebar on small screens */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 0;
+            }
+
+            .d-flex {
+                flex-direction: row;
+            }
+
+            .logo img {
+                width: 80px;
+            }
+
+            .d-flex.flex-column {
+                width: 100%;
+                height: auto;
+                padding-left: 0;
+            }
+
+            #cont-fluid {
+                padding: 0;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+            }
+        }
+
+        /* Adjust content area for smaller screens */
+        @media (max-width: 768px) {
+            main {
+                margin-top: 20px;
+            }
+
+            #content {
+                margin-top: 10px;
+            }
+
+            .dropdown-menu {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -35,54 +79,36 @@
 <body>
     <div class="container-fluid" id="cont-fluid">
         <div class="row">
-
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+            <!-- Sidebar -->
+            <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark col-md-3 col-12">
                 <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32">
-                        <use xlink:href="#bootstrap"></use>
-                    </svg>
                     <img src="{% static 'img/logo.png' %}" alt="icon" class="logo" />
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
                         <a href="#" class="nav-link text-white">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
                             Dashboard
                         </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="customers-link">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
                             Customers
                         </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="debts-link">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
                             Debts
                         </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="payments-link">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
                             Payments
                         </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link text-white" id="cheques-link">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
-                            Cheuqes
+                            Cheques
                         </a>
                     </li>
                 </ul>
@@ -90,7 +116,6 @@
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                         id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
                         <strong>mdo</strong>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
@@ -106,7 +131,7 @@
             </div>
 
             <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 col-12">
                 <h1 class="mt-3" id="head_title">Dashboard</h1>
                 <div id="content" class="mt-4">
                     <!-- Content loaded dynamically -->
@@ -115,83 +140,9 @@
         </div>
     </div>
 
+    <!-- Modal HTML goes here -->
 
-    {% comment %} Customer_list_Add_debt_modal {% endcomment %}
-    <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="customerModalLabel">Select Customer</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="selectCustomerForm" method="post" action="{% url 'select_customer' %}">
-                        {% csrf_token %}
-                        <input type="hidden" id="item_id_modal" name="debt.id" value="">
-                        <div class="mb-3">
-                            <label for="customerSelect" class="form-label"><strong>Choose a Customer</strong></label>
-                            <select class="form-select" id="customerSelect_debt_modal" name="customer_id">
-                                <option value="" disabled selected>Select a customer</option>
-                            </select><br>
-                            <div class="mb-3">
-                                <label for="debt_amount" class="form-label"><strong>Amount:</strong> </label>
-                                <input type="text" class="form-control" id="debt_amount" name="debt_amount">
-                            </div>
-                            <div class="mb-3">
-                                <label for="debt_description" class="form-label"><strong>Notes:</strong> </label>
-                                <textarea class="form-control" id="debt_description" rows="3"
-                                    name="debt_description"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" form="selectCustomerForm" class="btn btn-primary" id="add_debts">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="paymentModalLabel">Add Payment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addPaymentForm" method="post" action="#">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="customerSelect" class="form-label"><strong>Choose a Customer</strong></label>
-                            <select class="form-select" id="customerSelect" name="customer_id">
-                                <option value="" disabled selected>Select a customer</option>
-                            </select><br>
-                            <div class="mb-3">
-                                <label for="paymentAmount" class="form-label"><strong>Payment Amount:</strong> </label>
-                                <input type="text" class="form-control" id="paymentAmount" name="payment_amount">
-                            </div>
-                            <div class="mb-3">
-                                <label for="paymentType" class="form-label"><strong>Payment Type:</strong> </label>
-                                <select class="form-select" id="paymentType" name="payment_type">
-                                    <option value="" disabled selected>Select Payment Type</option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <option value="Transfer">Transfer</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="savePaymentButton">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 
     <script>
@@ -202,30 +153,93 @@
                 .then(response => response.json())
                 .then(data => {
                     let content = '<table class="table table-striped">';
-                    content += '<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th></tr></thead><tbody>';
-                    add_button = ' <a href="/add_Customer" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>';
+                    content += '<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Actions</th></tr></thead><tbody>';
+                    let add_button = '<a href="/add_Customer" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>';
                     data.forEach(customer => {
                         content += `<tr>
-                            <td>${customer.id}</td>
-                            <td>${customer.first_name} ${customer.second_name}</td>
-                            <td>${customer.email}</td>
-                            <td>${customer.mobile}</td>
-                            <td>
-                    <div class="actions">
-                        <button type="button" class="btn btn-primary"  data-bs-toggle="modal"
-                            data-bs-target="#exampleModal" data-id="${customer.id}">
-                            Edit
-                        </button>
-
-                        <button type="button" class="btn btn-danger" onclick="deleteCustomer(${customer.id})">
-                            Delete
-                        </button>
-                    </div>
-                </td>
-                            </tr>`;
+                    <td>${customer.id}</td>
+                    <td>${customer.first_name} ${customer.second_name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.mobile}</td>
+                    <td>
+                        <div class="actions">
+                            <!-- زر التعديل -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editCustomerModal" data-id="${customer.id}">
+                                Edit
+                            </button>
+                            <!-- زر الحذف -->
+                            <button type="button" class="btn btn-danger" onclick="deleteCustomer(${customer.id})">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
                     });
                     content += '</tbody></table>';
                     document.getElementById('content').innerHTML = add_button + content;
+
+                    // إضافة حدث للنقر على زر "Edit"
+                    document.querySelectorAll('[data-bs-target="#editCustomerModal"]').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const customerId = this.getAttribute('data-id');
+                            // جلب بيانات العميل
+                            fetch(`/api/customers/${customerId}/`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Customer not found');
+                                    }
+                                    return response.json();
+                                })
+                                .then(customer => {
+                                    // ملء الفورم بالبيانات
+                                    document.getElementById('customerId').value = customer.id;
+                                    document.getElementById('firstName').value = customer.first_name;
+                                    document.getElementById('secondName').value = customer.second_name;
+                                    document.getElementById('email').value = customer.email;
+                                    document.getElementById('mobile').value = customer.mobile;
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching customer data:', error);
+                                    alert('Failed to fetch customer data.');
+                                });
+                        });
+                    });
+
+                    // التعامل مع الفورم عند الإرسال
+                    document.getElementById('editCustomerForm').addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        const customerId = document.getElementById('customerId').value;
+                        const formData = {
+                            first_name: document.getElementById('firstName').value,
+                            second_name: document.getElementById('secondName').value,
+                            email: document.getElementById('email').value,
+                            mobile: document.getElementById('mobile').value,
+                        };
+
+                        // إرسال البيانات إلى الخادم
+                        fetch(`/api/customers/${customerId}/`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formData),
+                        })
+                            .then(response => {
+                                console.log("Response status:", response.status);
+                                if (!response.ok) {
+                                    return response.json().then(err => {
+                                        console.error("Error response from server:", err);
+                                        throw new Error('Failed to update customer');
+                                    });
+                                }
+                                alert('Customer updated successfully!');
+                                document.getElementById('customers-link').click();
+                            })
+                            .catch(error => {
+                                console.error('Error updating customer:', error);
+                                alert('Failed to update customer.');
+                            });
+                    });
                 });
         });
 
@@ -366,52 +380,90 @@
 
         //View_Payments_by_Fetch
         document.getElementById('payments-link').addEventListener('click', function () {
-            fetch('/api/payments/')
-                .then(response => response.json())
-                .then(data => {
-                    let content = '<table class="table table-striped">';
-                    content += '<thead><tr><th>ID</th><th>Payment Type</th><th>Payment Amount</th><th>Customer Name</th><th>Created At</th><th>Total Debt Amount</th><th>Remaining Debt</th><th>Actions</th></tr></thead><tbody>';
+    fetch('/api/payments/')
+        .then(response => response.json())
+        .then(data => {
+            let content = '<table class="table table-striped">';
+            content += '<thead><tr><th>ID</th><th>Payment Type</th><th>Payment Amount</th><th>Customer Name</th><th>Created At</th><th>Total Debt Amount</th><th>Remaining Debt</th><th>Actions</th></tr></thead><tbody>';
 
-                    data.forEach(payment => {
+            data.forEach(payment => {
+                content += `
+                    <tr>
+                        <td>${payment.id}</td>
+                        <td>${payment.payment_type}</td>
+                        <td>${payment.amount_payment}</td>
+                        <td>${payment.customer_name}</td>
+                        <td>${payment.created_at}</td>
+                        <td>${payment.total_debt}</td>
+                        <td>${payment.amount_remain}</td>
+                        <td>
+                            <div class="actions">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#editPaymentModal" data-id="${payment.id}" 
+                                    data-payment-type="${payment.payment_type}" 
+                                    data-payment-amount="${payment.amount_payment}" 
+                                    data-customer-name="${payment.customer_name}">
+                                    Edit
+                                </button>
+                                <form action="delete_item" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id" value="${payment.id}">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+            content += '</tbody></table>';
+            document.getElementById('content').innerHTML = content;
+            document.getElementById('head_title').textContent = 'Payments';
 
-                        add_buton = `<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal" data-bs-target="#paymentModal" data-id="${payment.id}"> Add Payment </button>`;
-                        content += `
-                            <tr>
-                                <td>${payment.id}</td>
-                                <td>${payment.payment_type}</td>
-                                <td>${payment.amount_payment}</td>
-                                <td>${payment.customer_name}</td>
-                                <td>${payment.created_at}</td>
-                                <td>${payment.total_debt}</td>
-                                <td>${payment.amount_remain}</td>
+            // Event listener for edit buttons
+            document.querySelectorAll('[data-bs-target="#editPaymentModal"]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const paymentType = this.getAttribute('data-payment-type');
+                    const paymentAmount = this.getAttribute('data-payment-amount');
+                    const customerName = this.getAttribute('data-customer-name');
 
-                                
-                                
-
-                                
-                                <td>
-                                    <div class="actions">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#editPaymentModal" data-id="${payment.id}">
-                                            Edit
-                                        </button>
-                                        
-                                        <form action="delete_item" method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="item_id" value="${payment.id}">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                                
-                            </tr>`;
-                    });
-                    content += '</tbody></table>';
-                    document.getElementById('content').innerHTML = add_buton + content; // إضافة الزر بعد تحميل الجدول
-                    document.getElementById('head_title').textContent = 'Payments';
+                    // Fill the modal with data
+                    document.getElementById('editPaymentId').value = id;
+                    document.getElementById('editPaymentType').value = paymentType;
+                    document.getElementById('editPaymentAmount').value = paymentAmount;
+                    document.getElementById('editCustomerName').value = customerName;
                 });
-        });
+            });
 
+            // Handle form submission for editing
+            document.getElementById('editPaymentForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const id = document.getElementById('editPaymentId').value;
+                const paymentType = document.getElementById('editPaymentType').value;
+                const paymentAmount = document.getElementById('editPaymentAmount').value;
+                const customerName = document.getElementById('editCustomerName').value;
+
+                fetch(`/api/payments/${id}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        payment_type: paymentType,
+                        amount_payment: paymentAmount,
+                        customer_name: customerName,
+                    }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Close the modal and reload payments
+                        document.querySelector('#editPaymentModal .btn-close').click();
+                        document.getElementById('payments-link').click();
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+});
         //Modal_customer_in_debt_page
         document.addEventListener('DOMContentLoaded', function () {
             var customerModal = document.getElementById('customerModal');
@@ -582,6 +634,69 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="saveDebtChanges">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- form for edit customer -->
+    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCustomerModalLabel">Edit Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCustomerForm">
+                        <input type="hidden" id="customerId" name="customerId">
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="secondName" class="form-label">Second Name</label>
+                            <input type="text" class="form-control" id="secondName" name="secondName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mobile" class="form-label">Mobile</label>
+                            <input type="text" class="form-control" id="mobile" name="mobile" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPaymentModalLabel">Edit Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPaymentForm">
+                        <div class="mb-3">
+                            <label for="editPaymentType" class="form-label">Payment Type</label>
+                            <input type="text" class="form-control" id="editPaymentType" name="payment_type">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPaymentAmount" class="form-label">Payment Amount</label>
+                            <input type="number" class="form-control" id="editPaymentAmount" name="amount_payment">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCustomerName" class="form-label">Customer Name</label>
+                            <input type="text" class="form-control" id="editCustomerName" name="customer_name">
+                        </div>
+                        <input type="hidden" id="editPaymentId" name="id">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
                 </div>
             </div>
         </div>

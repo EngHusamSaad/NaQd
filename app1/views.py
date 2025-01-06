@@ -276,3 +276,99 @@ def edit_debt(request, debt_id):
         except Debt.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Debt not found'})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@csrf_exempt
+@csrf_exempt
+def update_customer(request, id):
+    if request.method == 'PUT':
+        try:
+            # جلب العميل
+            customer = Customer.objects.get(id=id)
+            
+            # قراءة البيانات المرسلة
+            data = json.loads(request.body)
+            print("Data received:", data)
+
+            # تحديث الحقول
+            customer.first_name = data.get('first_name', customer.first_name)
+            customer.second_name = data.get('second_name', customer.second_name)
+            customer.email = data.get('email', customer.email)
+            customer.mobile = data.get('mobile', customer.mobile)
+            customer.save()
+
+            return JsonResponse({'message': 'Customer updated successfully!'})
+
+        except Customer.DoesNotExist:
+            print(f"Customer with ID {id} does not exist.")
+            return JsonResponse({'error': 'Customer not found'}, status=404)
+
+        except Exception as e:
+            print("Unexpected error:", str(e))
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def get_customers(request):
+    if request.method == 'GET':
+        customers = Customer.objects.all()
+        customers_data = [
+            {
+                'id': customer.id,
+                'first_name': customer.first_name,
+                'second_name': customer.second_name,
+                'email': customer.email,
+                'mobile': customer.mobile,
+            }
+            for customer in customers
+        ]
+        return JsonResponse(customers_data, safe=False)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+def get_customer(request, id):
+    try:
+        customer = Customer.objects.get(id=id)
+        data = {
+            'id': customer.id,
+            'first_name': customer.first_name,
+            'second_name': customer.second_name,
+            'email': customer.email,
+            'mobile': customer.mobile,
+        }
+        return JsonResponse(data)
+    except Customer.DoesNotExist:
+        return JsonResponse({'error': 'Customer not found'}, status=404)
+    
+
+@csrf_exempt  # تعطيل CSRF إذا كنت تستخدم JavaScript لإرسال الطلبات
+def update_payment(request, id):
+    if request.method == 'PUT':
+        try:
+            # الحصول على بيانات الطلب
+            data = json.loads(request.body)
+            payment = Payment.objects.get(id=id)
+
+            # تحديث البيانات
+            payment.payment_type = data.get('payment_type', payment.payment_type)
+            payment.amount_payment = data.get('amount_payment', payment.amount_payment)
+            payment.customer_name = data.get('customer_name', payment.customer_name)
+            payment.save()
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Payment updated successfully.',
+                'payment': {
+                    'id': payment.id,
+                    'payment_type': payment.payment_type,
+                    'amount_payment': payment.amount_payment,
+                    'customer_name': payment.customer_name,
+                    'created_at': payment.created_at,
+                },
+            })
+
+        except Paymnet.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Payment not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
