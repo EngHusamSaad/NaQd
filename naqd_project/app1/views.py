@@ -7,7 +7,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .models import Customer,Debt,Paymnet,Cheque
 import bcrypt
+
 from django.db.models import Sum
+
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -27,6 +31,7 @@ def register(request):
       password=request.POST['password']
       hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
+
       photo = request.FILES.get('photo') 
 
       Customer.objects.create(first_name=request.POST['first_name'],
@@ -35,6 +40,7 @@ def register(request):
                           identity=request.POST['identity'],
                           address=request.POST['address'],
                           mobile=request.POST['mobile'],
+
                           password = hash,
                           photo=photo,
                           )
@@ -46,6 +52,7 @@ def register(request):
 
 def main(request):
     return render(request,"main.html")
+
 
 def about(request):
     return render(request,"about.html")
@@ -131,7 +138,8 @@ def add_debts(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print('Received data:', data) 
+          
+
             
             customer_id = data.get('customer_id')
             debt_amount = data.get('debtamount')
@@ -158,6 +166,8 @@ def add_debts(request):
     return JsonResponse({'success': False, 'error': 'طلب غير صالح'})
 
 
+
+
 def customers_view(request):
     try:
         customers = Customer.objects.all().values('id', 'first_name', 'second_name')
@@ -165,6 +175,7 @@ def customers_view(request):
     except Exception as e:
         print(f"Error fetching customers: {e}")
         return JsonResponse({'error': 'Failed to retrieve customers'}, status=500)
+
 
 def debt_view(request):
     customer_id = request.GET.get('customer_id')
@@ -205,10 +216,12 @@ def login_view(request):
             if user is not None:
                 login(request, user)  # Login the user
 
+
                 # Check if the email is the special email
                 if email == "naqd@gmail.com":
                     return redirect('/admin/')  # Redirect to the Django admin page
                 
+
                 return redirect('/home')  # Redirect to a home page or dashboard
             else:
                 error_message = "Invalid password"
@@ -216,12 +229,14 @@ def login_view(request):
             error_message = "Invalid email address"
         
         return render(request, 'home.html', {'error_message': error_message})
+
     data = {
         "first_name": request.session.get('first_name', ''),
         "second_name": request.session.get('second_name', '')
     }
-    
-    return render(request, 'home.html',data)
+       
+    return render(request, 'home.html')
+
 
 def home(request):
     return render(request,"home.html")
@@ -242,6 +257,7 @@ def customer_summary(request):
     }
 
     return render(request, 'home.html', data)
+
 
 def add_payment(request):
     if request.method == 'POST':
@@ -264,7 +280,6 @@ def add_payment(request):
             response = {'success': False, 'error': 'Customer not found'}
 
         return JsonResponse(response)
-
 
 def chart_data_1(request):
     debts = Debt.objects.values('customer__first_name', 'customer__second_name').annotate(total_debt=Sum('amount_debt'))
@@ -295,3 +310,150 @@ def latest_customers(request):
         for customer in customers
     ]
     return JsonResponse(customer_data, safe=False)
+
+    
+def delete_debt(request, pk):
+    debt = get_object_or_404(Debt, pk=pk)
+    if request.method == 'POST':
+        debt.delete()
+        return JsonResponse({'success': True})  # إرجاع استجابة JSON بعد الحذف
+    return JsonResponse({'success': False}, status=400)
+@csrf_exempt
+def delete_customer(request, customer_id):
+    try:
+        customer = Customer.objects.get(id=customer_id)
+        customer.delete()
+        return JsonResponse({'message': 'Customer deleted successfully'}, status=200)
+    except Customer.DoesNotExist:
+        return JsonResponse({'message': 'Customer not found'}, status=404)
+    
+@csrf_exempt
+def update_customer(request, customer_id):
+    if request.method == 'PUT':
+        try:
+            customer = Customer.objects.get(id=customer_id)
+            data = json.loads(request.body)
+
+            # تحديث الحقول بناءً على البيانات المدخلة
+            customer.first_name = data.get('first_name', customer.first_name)
+            customer.second_name = data.get('second_name', customer.second_name)
+            customer.email = data.get('email', customer.email)
+            customer.mobile = data.get('mobile', customer.mobile)
+
+            customer.save()
+
+            return JsonResponse({'message': 'Customer updated successfully'}, status=200)
+        except Customer.DoesNotExist:
+            return JsonResponse({'message': 'Customer not found'}, status=404)
+
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
+    
+def edit_debt(request, debt_id):
+    if request.method == 'POST':
+        try:
+            debt = Debt.objects.get(id=debt_id)
+            data = json.loads(request.body)
+            debt.amount_debt = data.get('amount_debt')
+            debt.notes = data.get('notes')
+            debt.save()
+            return JsonResponse({'success': True})
+        except Debt.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Debt not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@csrf_exempt
+@csrf_exempt
+def update_customer(request, id):
+    if request.method == 'PUT':
+        try:
+            # جلب العميل
+            customer = Customer.objects.get(id=id)
+            
+            # قراءة البيانات المرسلة
+            data = json.loads(request.body)
+            print("Data received:", data)
+
+            # تحديث الحقول
+            customer.first_name = data.get('first_name', customer.first_name)
+            customer.second_name = data.get('second_name', customer.second_name)
+            customer.email = data.get('email', customer.email)
+            customer.mobile = data.get('mobile', customer.mobile)
+            customer.save()
+
+            return JsonResponse({'message': 'Customer updated successfully!'})
+
+        except Customer.DoesNotExist:
+            print(f"Customer with ID {id} does not exist.")
+            return JsonResponse({'error': 'Customer not found'}, status=404)
+
+        except Exception as e:
+            print("Unexpected error:", str(e))
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def get_customers(request):
+    if request.method == 'GET':
+        customers = Customer.objects.all()
+        customers_data = [
+            {
+                'id': customer.id,
+                'first_name': customer.first_name,
+                'second_name': customer.second_name,
+                'email': customer.email,
+                'mobile': customer.mobile,
+            }
+            for customer in customers
+        ]
+        return JsonResponse(customers_data, safe=False)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+def get_customer(request, id):
+    try:
+        customer = Customer.objects.get(id=id)
+        data = {
+            'id': customer.id,
+            'first_name': customer.first_name,
+            'second_name': customer.second_name,
+            'email': customer.email,
+            'mobile': customer.mobile,
+        }
+        return JsonResponse(data)
+    except Customer.DoesNotExist:
+        return JsonResponse({'error': 'Customer not found'}, status=404)
+    
+
+@csrf_exempt  # تعطيل CSRF إذا كنت تستخدم JavaScript لإرسال الطلبات
+def update_payment(request, id):
+    if request.method == 'PUT':
+        try:
+            # الحصول على بيانات الطلب
+            data = json.loads(request.body)
+            payment = Payment.objects.get(id=id)
+
+            # تحديث البيانات
+            payment.payment_type = data.get('payment_type', payment.payment_type)
+            payment.amount_payment = data.get('amount_payment', payment.amount_payment)
+            payment.customer_name = data.get('customer_name', payment.customer_name)
+            payment.save()
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Payment updated successfully.',
+                'payment': {
+                    'id': payment.id,
+                    'payment_type': payment.payment_type,
+                    'amount_payment': payment.amount_payment,
+                    'customer_name': payment.customer_name,
+                    'created_at': payment.created_at,
+                },
+            })
+
+        except Paymnet.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Payment not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
