@@ -491,7 +491,7 @@ def send_reminder(request):
                 [customer_email],
                 fail_silently=False,
             )
-            return JsonResponse({"message": "Email sent successfully!"}, status=200)
+            return JsonResponse({"message": "Reminder was sent successfully by Email !"}, status=200)
         except Exception as e:
             return JsonResponse({"message": f"Failed to send email: {str(e)}"}, status=500)
     else:
