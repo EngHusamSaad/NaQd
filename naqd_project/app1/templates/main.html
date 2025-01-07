@@ -9,13 +9,18 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    {% comment %} <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css" rel="stylesheet"> {% endcomment %}
-
+    {% comment %}
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css"
+      rel="stylesheet"
+    />
+    {% endcomment %}
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.js"></script> {% endcomment %}
-
+    {% comment %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.js"></script>
+    {% endcomment %}
 
     <style>
       .logo img {
@@ -55,31 +60,30 @@
         background: #fff;
       }
 
-    /* تغيير لون الروابط في شريط التنقل */
-.nav-link {
-  color: #fff !important; /* اللون الأبيض */
-}
+      /* تغيير لون الروابط في شريط التنقل */
+      .nav-link {
+        color: #fff !important; /* اللون الأبيض */
+      }
 
-/* تغيير اللون عند التمرير فوق الرابط */
-.nav-link:hover {
-  color: #f8f9fa !important; /* لون أفتح عند التمرير */
-}
+      /* تغيير اللون عند التمرير فوق الرابط */
+      .nav-link:hover {
+        color: #f8f9fa !important; /* لون أفتح عند التمرير */
+      }
 
-/* لتحديد اللون عند تحديد الرابط */
-.nav-link.active {
-  color: #007bff !important; /* تغيير اللون عند التحديد */
-}
-
+      /* لتحديد اللون عند تحديد الرابط */
+      .nav-link.active {
+        color: #007bff !important; /* تغيير اللون عند التحديد */
+      }
     </style>
   </head>
 
   <body>
-    <div class="container-fluid" id="cont-fluid">
-      <div class="row">
+    <div class="container-fluid" id="cont-fluid" style="height: 100vh; display: flex; flex-wrap: nowrap;">
+      <div class="row" style="display: flex; width: 100%; flex-grow: 1;">
         <div
           class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
-          style="width: 280px; min-height: 100vh;"
-        >
+          style="width: 280px; min-height: 100vh; flex-shrink: 0; box-sizing: border-box;">  <!-- تأكد من عدم تغير العرض -->
+        
           <a
             href="/"
             class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
@@ -128,15 +132,15 @@
                 <svg class="bi me-2" width="16" height="16">
                   <use xlink:href="#speedometer2"></use>
                 </svg>
-                Cheuqes
+                Cheques
               </a>
             </li>
           </ul>
           <hr />
         </div>
-
+    
         <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="flex-grow: 1; overflow: auto; box-sizing: border-box;">
           <h1 class="mt-3" id="head_title">Dashboard</h1>
           <div id="content" class="mt-4">
             <!-- Content loaded dynamically -->
@@ -144,6 +148,9 @@
         </main>
       </div>
     </div>
+    
+    
+    
 
     {% comment %} Customer_list_Add_debt_modal {% endcomment %}
     <div
@@ -573,21 +580,25 @@
       //View_Debts_by_Fetch
       function loaddebtspage() {
         fetch("/api/debts/")
-            .then((response) => response.json())
-            .then((data) => {
-                let content = '<table class="table table-striped">';
-                content +=
-                    "<thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Customer</th><th>Actions</th></tr></thead><tbody>";
-                add_button =
-                      '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal"  data-bs-target="#customerModal" data-id="${debt.id}">  Add Debts  </button>';
-    
-                data.forEach((debt, index) => {
-                    content += `<tr>
+          .then((response) => response.json())
+          .then((data) => {
+            let content = '<table class="table table-striped">';
+            content +=
+              "<thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Customer</th><th>Actions</th></tr></thead><tbody>";
+            add_button =
+              '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal"  data-bs-target="#customerModal" data-id="${debt.id}">  Add Debts  </button>';
+
+            data.forEach((debt, index) => {
+              content += `<tr>
                         <td>${index + 1}</td>
                         <td>${debt.amount_debt}</td>
                         <td>
                             <span style="padding: 5px 10px; border-radius: 5px; color: white;"
-                                  class="${debt.status_debt ? "bg-success" : "bg-danger"}">
+                                  class="${
+                                    debt.status_debt
+                                      ? "bg-success"
+                                      : "bg-danger"
+                                  }">
                               ${debt.status_debt ? "Paid" : "Unpaid"}
                             </span>
                         </td>
@@ -602,7 +613,9 @@
                             </button>
 
                           
-                                <button type="button" class="btn btn-warning send-reminder" data-id="${debt.id}">
+                                <button type="button" class="btn btn-warning send-reminder" data-id="${
+                                  debt.id
+                                }">
                                     Send Reminder
                                 </button>
                             
@@ -616,66 +629,71 @@
                           </div>
                         </td>
                     </tr>`;
-                });
-                content += "</tbody></table>";
-                document.getElementById("content").innerHTML = add_button+content;
-                document.getElementById("head_title").textContent = "Debts";
-    
-                // إضافة الحدث إلى زر الإرسال
-                document.querySelectorAll('.send-reminder').forEach((button) => {
-                    button.addEventListener('click', function () {
-                        const debtId = this.getAttribute('data-id');
-    
-                        // إرسال الطلب عبر Fetch
-                        fetch('/send_reminder/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'X-CSRFToken': getCookie('csrftoken'), // للحصول على CSRF
-                            },
-                            body: `debt_id=${debtId}`
-                        })
-                        .then(response => response.json())
-                        .then(result => {
-                            const alertBox = document.createElement('div');
-                            alertBox.className = `alert ${result.message.includes('successfully') ? 'alert-success' : 'alert-danger'} fade show`;
-                            alertBox.textContent = result.message;
-                            alertBox.style.position = "fixed";
-                            alertBox.style.top = "10px";
-                            alertBox.style.right = "10px";
-                            alertBox.style.zIndex = "1050";
-                            alertBox.style.padding = "15px";
-                            alertBox.style.borderRadius = "5px";
-    
-                            document.body.appendChild(alertBox);
-    
-                            // إخفاء الإشعار بعد 3 ثوانٍ
-                            setTimeout(() => alertBox.remove(), 3000);
-                        })
-                        .catch(error => {
-                            alert('An error occurred: ' + error);
-                        });
-                    });
-                });
             });
-    }
-    
-    // دالة للحصول على CSRF
-    function getCookie(name) {
+            content += "</tbody></table>";
+            document.getElementById("content").innerHTML = add_button + content;
+            document.getElementById("head_title").textContent = "Debts";
+
+            // إضافة الحدث إلى زر الإرسال
+            document.querySelectorAll(".send-reminder").forEach((button) => {
+              button.addEventListener("click", function () {
+                const debtId = this.getAttribute("data-id");
+
+                // إرسال الطلب عبر Fetch
+                fetch("/send_reminder/", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCookie("csrftoken"), // للحصول على CSRF
+                  },
+                  body: `debt_id=${debtId}`,
+                })
+                  .then((response) => response.json())
+                  .then((result) => {
+                    const alertBox = document.createElement("div");
+                    alertBox.className = `alert ${
+                      result.message.includes("successfully")
+                        ? "alert-success"
+                        : "alert-danger"
+                    } fade show`;
+                    alertBox.textContent = result.message;
+                    alertBox.style.position = "fixed";
+                    alertBox.style.top = "10px";
+                    alertBox.style.right = "10px";
+                    alertBox.style.zIndex = "1050";
+                    alertBox.style.padding = "15px";
+                    alertBox.style.borderRadius = "5px";
+
+                    document.body.appendChild(alertBox);
+
+                    // إخفاء الإشعار بعد 3 ثوانٍ
+                    setTimeout(() => alertBox.remove(), 3000);
+                  })
+                  .catch((error) => {
+                    alert("An error occurred: " + error);
+                  });
+              });
+            });
+          });
+      }
+
+      // دالة للحصول على CSRF
+      function getCookie(name) {
         let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + "=")) {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
             }
+          }
         }
         return cookieValue;
-    }
-    
+      }
 
       //View_Payments_by_Fetch
       document
