@@ -472,29 +472,29 @@ def update_payment(request, id):
 
 
 def send_reminder(request):
+    if request.method == 'POST':
+        try:
+            debt_id = request.POST.get('debt_id')
+            debt = get_object_or_404(Debt, id=debt_id)
+            customer_email = debt.customer.email
+            
+            subject = 'Debt Notification'
+            message = f"Dear {debt.customer.first_name} {debt.customer.second_name},\n\n" \
+                      f"You have an outstanding debt of {debt.amount_debt}.\n" \
+                      f"Please make sure to settle it as soon as possible.\n\n" \
+                      f"Thank you for your attention!"
 
-        debt_id = request.POST.get('debt_id')
-        debt = get_object_or_404(Debt, id=debt_id)
-        customer_email = debt.customer.email
-        
-        print(customer_email)
-        
-        subject = 'Debt Notification'
-        message = f"Dear {debt.customer.first_name} {debt.customer.second_name},\n\n" \
-              f"You have an outstanding debt of {debt.amount_debt}.\n" \
-              f"Please make sure to settle it as soon as possible.\n\n" \
-              f"Thank you for your attention!"
-
-        if request.method == 'POST':
             send_mail(
-        subject,  # عنوان الرسالة
-        message,  # نص الرسالة
-        'System@palestinebar.ps',  # البريد المرسل
-        [customer_email],  # البريد المرسل إليه
-        fail_silently=False,
-        )
-            return JsonResponse({"message": "Password reset successfully"}, status=200)
-    
-        else:
-            return JsonResponse({"message": "User not found"}, status=404)
+                subject,
+                message,
+                'System@palestinebar.ps',
+                [customer_email],
+                fail_silently=False,
+            )
+            return JsonResponse({"message": "Email sent successfully!"}, status=200)
+        except Exception as e:
+            return JsonResponse({"message": f"Failed to send email: {str(e)}"}, status=500)
+    else:
+        return JsonResponse({"message": "Invalid request method."}, status=400)
+
 

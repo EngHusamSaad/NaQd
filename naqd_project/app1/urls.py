@@ -39,14 +39,11 @@ urlpatterns = [
     path('delete_debt/<int:pk>/', views.delete_debt, name='delete_debt'),
     path('edit_debt/<int:debt_id>/', views.edit_debt, name='edit_debt'),
     
-
-
-
     path('api/payments/<int:id>/', views.update_payment, name='update_payment'),
     
     
     
-     path('send_reminder', views.send_reminder, name='send_reminder'),
+     path('send_reminder/', views.send_reminder, name='send_reminder'),
 
 
 ]
