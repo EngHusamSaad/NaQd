@@ -1,4 +1,4 @@
-# Customer and Debt Management Project
+# NaQd- Financial Mgt. System
 
 This is a Django-based web project for managing customers and debts. The project features a flexible user interface with Bootstrap and a sidebar design for displaying data. This is the final project for a programming training course in collaboration with Axsos.
 
