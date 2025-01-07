@@ -29,9 +29,9 @@ This is a Django-based web project for managing customers and debts. The project
 7. http://127.0.0.1:8000/
 
  Team Members: 
-   Eng.Husam Saad - +972599477984 - eng.husam.saed@gmail.com
-   Yasmeen Muket - +972 54-423-9310 - Yasmeenmuaket@gmail.com
-   Faiz Alsorakhy - +972 59-580-5944 - Faizalsorakhy@gmail.com
+   - Eng.Husam Saad - +972599477984 - eng.husam.saed@gmail.com
+   - Yasmeen Muket - +972 54-423-9310 - Yasmeenmuaket@gmail.com
+   - Faiz Alsorakhy - +972 59-580-5944 - Faizalsorakhy@gmail.com
 
 Photos:
 ====================
