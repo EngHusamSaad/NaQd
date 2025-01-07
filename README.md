@@ -33,4 +33,9 @@ This is a Django-based web project for managing customers and debts. The project
    Yasmeen Muket - +972 54-423-9310 - Yasmeenmuaket@gmail.com
    Faiz Alsorakhy - +972 59-580-5944 - Faizalsorakhy@gmail.com
 
+Photos:
+====================
+![Screenshot 2025-01-07 125916](https://github.com/user-attachments/assets/28540fb9-dc4f-47f4-880a-2f1ec5402342)
+
+
 
