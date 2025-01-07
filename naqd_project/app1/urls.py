@@ -43,6 +43,10 @@ urlpatterns = [
 
 
     path('api/payments/<int:id>/', views.update_payment, name='update_payment'),
+    
+    
+    
+     path('send_reminder', views.send_reminder, name='send_reminder'),
 
 
 ]

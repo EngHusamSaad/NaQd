@@ -7,11 +7,12 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .models import Customer,Debt,Paymnet,Cheque
 import bcrypt
-
 from django.db.models import Sum
-
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+import smtplib
+from email.mime.text import MIMEText
 
 
 
@@ -467,4 +468,33 @@ def update_payment(request, id):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
+
+
+def send_reminder(request):
+
+        debt_id = request.POST.get('debt_id')
+        debt = get_object_or_404(Debt, id=debt_id)
+        customer_email = debt.customer.email
+        
+        print(customer_email)
+        
+        subject = 'Debt Notification'
+        message = f"Dear {debt.customer.first_name} {debt.customer.second_name},\n\n" \
+              f"You have an outstanding debt of {debt.amount_debt}.\n" \
+              f"Please make sure to settle it as soon as possible.\n\n" \
+              f"Thank you for your attention!"
+
+        if request.method == 'POST':
+            send_mail(
+        subject,  # عنوان الرسالة
+        message,  # نص الرسالة
+        'System@palestinebar.ps',  # البريد المرسل
+        [customer_email],  # البريد المرسل إليه
+        fail_silently=False,
+        )
+            return JsonResponse({"message": "Password reset successfully"}, status=200)
+    
+        else:
+            return JsonResponse({"message": "User not found"}, status=404)
 

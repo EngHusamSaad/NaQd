@@ -45,6 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.office365.com'  # أو الخادم الذي تستخدمه
+EMAIL_PORT = 587  # عادةً يكون 587 للبريد المشفر
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'System@palestinebar.ps'  # بريدك الإلكتروني
+EMAIL_HOST_PASSWORD = 'Jov20602!'  # كلمة المرور أو كلمة مرور التطبيقات
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,8 +130,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/img/'
-MEDIA_ROOT = BASE_DIR / 'img'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -572,7 +572,7 @@
     ${debt.status_debt ? "Paid" : "Unpaid"}
   </span>
 </td>
-                    <td>${debt.customer_name}</td>
+                    <td><strong>${debt.customer_name}</strong></td>
                     <td>
                         <div class="actions">
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -581,6 +581,12 @@
                                 }">
                                 Edit
                             </button>
+                    
+                             <form action="send_reminder" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="debt_id" value="${debt.id}">
+                                    <button type="submit" class="btn btn-warning " >Send Reminder</button>
+                                </form>
 
                             <form action="delete_item" method="post">
                                 {% csrf_token %}
