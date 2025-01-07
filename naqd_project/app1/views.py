@@ -327,10 +327,10 @@ def latest_customers(request):
     ]
     return JsonResponse(customer_data, safe=False)
 
-    
+@csrf_exempt
 def delete_debt(request, pk):
-    debt = get_object_or_404(Debt, pk=pk)
     if request.method == 'POST':
+        debt = get_object_or_404(Debt, pk=pk)
         debt.delete()
         return JsonResponse({'success': True})  # إرجاع استجابة JSON بعد الحذف
     return JsonResponse({'success': False}, status=400)
