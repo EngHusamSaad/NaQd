@@ -627,9 +627,12 @@
                           <td><strong>${debt.customer_name}</strong></td>
                           <td>
                             <div class="actions">
-                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="${debt.id}">Edit</button>
+                             <button type="button" class="btn btn-primary" onclick="openEditModal(${debt.id}, '${debt.amount_debt}', '${debt.notes}')" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal" data-id="${debt.id}">
+                                Edit
+                            </button>
                               <button type="button" class="btn btn-warning send-reminder" data-id="${debt.id}">Send Reminder</button>
-                              <form action="delete_item" method="post">
+                              <form action="/delete_debt/${debt.id}/" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="item_id" value="${debt.id}">
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -1199,29 +1202,33 @@
       });
 
       // دالة حذف الدين عبر AJAX
-      function deleteDebt(debtId) {
-        fetch(`/delete_debt/${debtId}/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
-              .value,
-          },
-          body: JSON.stringify({ item_id: debtId }),
-        })
-          .then((response) => {
-            if (response.ok) {
-              // إزالة الصف من الجدول بعد الحذف
-              document.getElementById(`debt-row-${debtId}`).remove();
-            } else {
-              alert("Failed to delete debt");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("Error deleting debt");
-          });
-      }
+     document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const form = this.closest('form'); // استدعاء النموذج المرتبط
+        const debtId = form.getAttribute('data-id'); // الحصول على معرف الدين
+        const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value; // رمز CSRF
+
+        if (confirm("Are you sure you want to delete this debt?")) { // تأكيد الحذف
+            fetch(`/delete_debt/${debtId}/`, { // استدعاء المسار مع المعرف
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken, // إرسال رمز CSRF
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Debt deleted successfully!");
+                    form.closest('tr').remove(); // حذف الصف بدون إعادة تحميل
+                } else {
+                    alert("Failed to delete the debt.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+});
 
       document
         .querySelectorAll('[data-bs-target="#editCustomerModal"]')
