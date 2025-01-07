@@ -61,17 +61,21 @@ def about(request):
 
 def customers_list(request):
     customers = Customer.objects.all()
-    data = [
-        {
-            'id': customer.id,
-            'first_name': customer.first_name,
-            'second_name': customer.second_name,
-            'email': customer.email,
-            'mobile': customer.mobile,
-        }
-        for customer in customers
-    ]
-    return JsonResponse(data, safe=False)
+    customer_count = Customer.objects.count()
+    data = {
+        'customers': [
+            {
+                'id': customer.id,
+                'first_name': customer.first_name,
+                'second_name': customer.second_name,
+                'email': customer.email,
+                'mobile': customer.mobile,
+            }
+            for customer in customers
+        ],
+        'count': customer_count,  # إضافة العدد الإجمالي للعملاء هنا
+    }
+    return JsonResponse(data)
 
 def debts_list(request):
     debts = Debt.objects.select_related('customer').all()
@@ -498,3 +502,21 @@ def send_reminder(request):
         return JsonResponse({"message": "Invalid request method."}, status=400)
 
 
+def debts_view(request):
+    search_query = request.GET.get('search', '')  
+    debts = Debt.objects.all()
+
+    # تطبيق البحث على اسم العميل
+    if search_query:
+        debts = debts.filter(customer__first_name__icontains=search_query)  
+
+    debts_data = []
+    for debt in debts:
+        debts_data.append({
+            'id': debt.id,
+            'amount_debt': debt.amount_debt,
+            'status_debt': debt.status_debt,
+            'customer_name': debt.customer.first_name,  
+        })
+
+    return JsonResponse(debts_data, safe=False)

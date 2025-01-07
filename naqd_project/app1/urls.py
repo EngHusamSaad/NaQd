@@ -44,6 +44,8 @@ urlpatterns = [
     
     
      path('send_reminder/', views.send_reminder, name='send_reminder'),
+     path('api/debts/', views.debts_view, name='debts_view'),
+
 
 
 ]

@@ -23,6 +23,11 @@
     {% endcomment %}
 
     <style>
+      
+
+      #searchForm{
+        display: flex;
+      }
       .logo img {
         width: 100px;
         /* عرض الشعار */
@@ -78,12 +83,21 @@
   </head>
 
   <body>
-    <div class="container-fluid" id="cont-fluid" style="height: 100vh; display: flex; flex-wrap: nowrap;">
-      <div class="row" style="display: flex; width: 100%; flex-grow: 1;">
+    <div
+      class="container-fluid"
+      id="cont-fluid"
+      style="height: 100vh; display: flex; flex-wrap: nowrap"
+    >
+      <div class="row" style="display: flex; width: 100%; flex-grow: 1">
         <div
           class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
-          style="width: 280px; min-height: 100vh; flex-shrink: 0; box-sizing: border-box;">  <!-- تأكد من عدم تغير العرض -->
-        
+          style="
+            width: 280px;
+            min-height: 100vh;
+            flex-shrink: 0;
+            box-sizing: border-box;
+          "
+        >
           <a
             href="/"
             class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
@@ -100,7 +114,7 @@
                 <svg class="bi me-2" width="16" height="16">
                   <use xlink:href="#speedometer2"></use>
                 </svg>
-                Dashboard1
+                Dashboard
               </a>
             </li>
             <li>
@@ -127,6 +141,7 @@
                 Payments
               </a>
             </li>
+            {% comment %}
             <li>
               <a href="#" class="nav-link text-white" id="cheques-link">
                 <svg class="bi me-2" width="16" height="16">
@@ -135,12 +150,16 @@
                 Cheques
               </a>
             </li>
+            {% endcomment %}
           </ul>
           <hr />
         </div>
-    
+
         <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="flex-grow: 1; overflow: auto; box-sizing: border-box;">
+        <main
+          class="col-md-9 ms-sm-auto col-lg-10 px-md-4"
+          style="flex-grow: 1; overflow: auto; box-sizing: border-box"
+        >
           <h1 class="mt-3" id="head_title">Dashboard</h1>
           <div id="content" class="mt-4">
             <!-- Content loaded dynamically -->
@@ -148,9 +167,6 @@
         </main>
       </div>
     </div>
-    
-    
-    
 
     {% comment %} Customer_list_Add_debt_modal {% endcomment %}
     <div
@@ -538,7 +554,9 @@
                 "<thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Actions</th></tr></thead><tbody>";
               add_button =
                 ' <a href="/register" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Add Customer</a>';
-              data.forEach((customer, index) => {
+                let counter = `<strong>Total Customers: ${data.count}</strong>`;
+
+                data.customers.forEach((customer, index) => {
                 content += `<tr>
                                         <td>${index + 1}</td>
                                         <td>${customer.first_name} ${
@@ -566,7 +584,7 @@
               });
               content += "</tbody></table>";
               document.getElementById("content").innerHTML =
-                add_button + content;
+                add_button + content+counter;
               document.getElementById("head_title").textContent = "Customer";
             });
         });
@@ -577,68 +595,112 @@
           loaddebtspage();
         });
 
-      //View_Debts_by_Fetch
+      // View_Debts_by_Fetch
       function loaddebtspage() {
+        // تحميل الديون بشكل أولي
         fetch("/api/debts/")
           .then((response) => response.json())
           .then((data) => {
             let content = '<table class="table table-striped">';
-            content +=
-              "<thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Customer</th><th>Actions</th></tr></thead><tbody>";
-            add_button =
-              '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal"  data-bs-target="#customerModal" data-id="${debt.id}">  Add Debts  </button>';
-
+            content += "<thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Customer</th><th>Actions</th></tr></thead><tbody>";
+            
+            let nav_block =
+                                '<nav class="navbar navbar-light bg-light">' +
+                                  '<form class="form-inline" id="searchForm">' +
+                                    '<input class="form-control mr-sm-2" type="search" id="searchInput" placeholder="Search" aria-label="Search">' +
+                                    '<button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="searchButton">Search</button>' +
+                                  '</form>' +
+                                  '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal" data-bs-target="#customerModal">Add Debts</button>' +
+                                '</nav>';
+      
+            // إضافة الديون في الجدول
             data.forEach((debt, index) => {
               content += `<tr>
-                        <td>${index + 1}</td>
-                        <td>${debt.amount_debt}</td>
-                        <td>
-                            <span style="padding: 5px 10px; border-radius: 5px; color: white;"
-                                  class="${
-                                    debt.status_debt
-                                      ? "bg-success"
-                                      : "bg-danger"
-                                  }">
-                              ${debt.status_debt ? "Paid" : "Unpaid"}
-                            </span>
-                        </td>
-                        <td><strong>${debt.customer_name}</strong></td>
-                        <td>
-                          <div class="actions">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#exampleModal" data-id="${
-                                  debt.id
-                                }">
-                                Edit
-                            </button>
-
-                          
-                                <button type="button" class="btn btn-warning send-reminder" data-id="${
-                                  debt.id
-                                }">
-                                    Send Reminder
-                                </button>
-                            
-                               <form action="delete_item" method="post">
+                          <td>${index + 1}</td>
+                          <td>${debt.amount_debt}</td>
+                          <td>
+                              <span style="padding: 5px 10px; border-radius: 5px; color: white;"
+                                    class="${debt.status_debt ? "bg-success" : "bg-danger"}">
+                                ${debt.status_debt ? "Paid" : "Unpaid"}
+                              </span>
+                          </td>
+                          <td><strong>${debt.customer_name}</strong></td>
+                          <td>
+                            <div class="actions">
+                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="${debt.id}">Edit</button>
+                              <button type="button" class="btn btn-warning send-reminder" data-id="${debt.id}">Send Reminder</button>
+                              <form action="delete_item" method="post">
                                 {% csrf_token %}
-                                <input type="hidden" name="item_id" value="${
-                                  debt.id
-                                }">
+                                <input type="hidden" name="item_id" value="${debt.id}">
                                 <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                          </div>
-                        </td>
-                    </tr>`;
+                              </form>
+                            </div>
+                          </td>
+                      </tr>`;
             });
+      
             content += "</tbody></table>";
-            document.getElementById("content").innerHTML = add_button + content;
+            document.getElementById("content").innerHTML = nav_block + content;
             document.getElementById("head_title").textContent = "Debts";
-
-            // إضافة الحدث إلى زر الإرسال
+      
+            // البحث
+            document.getElementById("searchForm").addEventListener("submit", function (event) {
+              event.preventDefault(); // منع إرسال النموذج
+      
+              let query = document.getElementById("searchInput").value.toLowerCase(); // الحصول على الكلمة المدخلة
+              if (query === "") {
+                // إذا كان حقل البحث فارغًا، قم بتحميل الديون مجددًا
+                loaddebtspage();
+              } else {
+                // إرسال طلب بحث للـ API مع الكلمة المدخلة
+                fetch(`/api/debts/?search=${query}`)
+                  .then((response) => response.json())
+                  .then((data) => {
+                    let searchContent = '<table class="table table-striped">';
+                    searchContent += "<thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Customer</th><th>Actions</th></tr></thead><tbody>";
+      
+                    // عرض الديون المصفاة بناءً على البحث
+                    data.forEach((debt, index) => {
+                      searchContent += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${debt.amount_debt}</td>
+                                <td>
+                                    <span style="padding: 5px 10px; border-radius: 5px; color: white;"
+                                          class="${debt.status_debt ? "bg-success" : "bg-danger"}">
+                                      ${debt.status_debt ? "Paid" : "Unpaid"}
+                                    </span>
+                                </td>
+                                <td><strong>${debt.customer_name}</strong></td>
+                                <td>
+                                  <div class="actions">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal" data-id="${debt.id}">
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn btn-warning send-reminder" data-id="${debt.id}">
+                                        Send Reminder
+                                    </button>
+                                    <form action="delete_item" method="post">
+                                      {% csrf_token %}
+                                      <input type="hidden" name="item_id" value="${debt.id}">
+                                      <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                  </div>
+                                </td>
+                            </tr>`;
+                    });
+      
+                    searchContent += "</tbody></table>";
+                    document.getElementById("content").innerHTML = nav_block + searchContent;
+                  });
+              }
+            });
+      
+            // إضافة الحدث إلى زر "Send Reminder"
             document.querySelectorAll(".send-reminder").forEach((button) => {
               button.addEventListener("click", function () {
                 const debtId = this.getAttribute("data-id");
-
+      
                 // إرسال الطلب عبر Fetch
                 fetch("/send_reminder/", {
                   method: "POST",
@@ -651,11 +713,7 @@
                   .then((response) => response.json())
                   .then((result) => {
                     const alertBox = document.createElement("div");
-                    alertBox.className = `alert ${
-                      result.message.includes("successfully")
-                        ? "alert-success"
-                        : "alert-danger"
-                    } fade show`;
+                    alertBox.className = `alert ${result.message.includes("successfully") ? "alert-success" : "alert-danger"} fade show`;
                     alertBox.textContent = result.message;
                     alertBox.style.position = "fixed";
                     alertBox.style.top = "10px";
@@ -663,9 +721,9 @@
                     alertBox.style.zIndex = "1050";
                     alertBox.style.padding = "15px";
                     alertBox.style.borderRadius = "5px";
-
+      
                     document.body.appendChild(alertBox);
-
+      
                     // إخفاء الإشعار بعد 3 ثوانٍ
                     setTimeout(() => alertBox.remove(), 3000);
                   })
@@ -676,6 +734,7 @@
             });
           });
       }
+      
 
       // دالة للحصول على CSRF
       function getCookie(name) {
@@ -851,7 +910,7 @@
               </thead>
               <tbody id="customers-table-body">
               </tbody>
-              
+
             `;
         tableContainer.appendChild(table);
         gridContainer.appendChild(tableContainer);
@@ -872,7 +931,7 @@
                     <td>${customer.name}</td>
                     <td>${customer.mobile}</td>
                     <td>${customer.created_at}</td>
-                    
+
                   `;
               tableBody.appendChild(row);
             });
