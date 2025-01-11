@@ -56,7 +56,6 @@ document
 
 // View_Debts_by_Fetch
 function loaddebtspage() {
-  // تحميل الديون بشكل أولي
   fetch("/api/debts/")
     .then((response) => response.json())
     .then((data) => {
@@ -71,8 +70,6 @@ function loaddebtspage() {
         '</form>' +
         '<button type="button" class="btn btn-primary btn-lg active" data-bs-toggle="modal" data-bs-target="#customerModal">Add Debts</button>' +
         '</nav>';
-
-      // إضافة الديون في الجدول
       data.forEach((debt, index) => {
         content += `<tr>
                         <td>${index + 1}</td>
@@ -103,66 +100,11 @@ function loaddebtspage() {
       document.getElementById("content").innerHTML = nav_block + content;
       document.getElementById("head_title").textContent = "Debts";
 
-      // البحث
-      document.getElementById("searchForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // منع إرسال النموذج
-
-        let query = document.getElementById("searchInput").value.toLowerCase(); // الحصول على الكلمة المدخلة
-        if (query === "") {
-          // إذا كان حقل البحث فارغًا، قم بتحميل الديون مجددًا
-          loaddebtspage();
-        } else {
-          // إرسال طلب بحث للـ API مع الكلمة المدخلة
-          fetch(`/api/debts/?search=${query}`)
-            .then((response) => response.json())
-            .then((data) => {
-              let searchContent = '<table class="table table-striped">';
-              searchContent += "<thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Customer</th><th>Actions</th></tr></thead><tbody>";
-
-              // عرض الديون المصفاة بناءً على البحث
-              data.forEach((debt, index) => {
-                searchContent += `<tr>
-                            <td>${index + 1}</td>
-                            <td>${debt.amount_debt}</td>
-                            <td>
-                                <span style="padding: 5px 10px; border-radius: 5px; color: white;"
-                                      class="${debt.status_debt ? "bg-success" : "bg-danger"}">
-                                  ${debt.status_debt ? "Paid" : "Unpaid"}
-                                </span>
-                            </td>
-                            <td><strong>${debt.customer_name}</strong></td>
-                            <td>
-                              <div class="actions">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal" data-id="${debt.id}">
-                                    Edit
-                                </button>
-                                <button type="button" class="btn btn-warning send-reminder" data-id="${debt.id}">
-                                    Send Reminder
-                                </button>
-                                <form action="delete_item" method="post">
-                                  {% csrf_token %}
-                                  <input type="hidden" name="item_id" value="${debt.id}">
-                                  <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                              </div>
-                            </td>
-                        </tr>`;
-              });
-
-              searchContent += "</tbody></table>";
-              document.getElementById("content").innerHTML = nav_block + searchContent;
-            });
-        }
-      });
- 
 
       // إضافة الحدث إلى زر "Send Reminder"
       document.querySelectorAll(".send-reminder").forEach((button) => {
         button.addEventListener("click", function () {
           const debtId = this.getAttribute("data-id");
-
-          // إرسال الطلب عبر Fetch
           fetch("/send_reminder/", {
             method: "POST",
             headers: {
@@ -243,16 +185,12 @@ document
                                 <td>
                                     <div class="actions">
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#editPaymentModal" data-id="${payment.id
-            }">
+                                            data-bs-target="#editPaymentModal" data-id="${payment.id}">
                                             Edit
                                         </button>
-                                        <form action="delete_item" method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="item_id" value="${payment.id
-            }">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
+                                        <button type="button" class="btn btn-danger delete-btn_payment" data-id="${payment.id}">
+                                Delete
+                            </button>
                                     </div>
                                 </td>
 
@@ -695,6 +633,37 @@ document.addEventListener('click', function (e) {
 });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('delete-btn_payment')) {
+        const paymentId = e.target.getAttribute('data-id');  // الحصول على معرّف الدين
+        console.log(paymentId);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    
+        if (confirm("Are you sure you want to delete this debt?")) {
+          fetch(`/delete_payment/${paymentId}/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': csrfToken,  // استخدام الـ csrfToken الذي تم تعريفه في JavaScript
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: paymentId }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert("Payemnt deleted successfully!");
+                e.target.closest('tr').remove();  // حذف الصف من الجدول
+              } else {
+                alert("Failed to delete the debt.");
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+      }
+    });
+    });
 
 document.addEventListener("DOMContentLoaded", function () {
 document

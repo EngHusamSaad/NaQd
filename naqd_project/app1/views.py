@@ -334,6 +334,16 @@ def delete_debt(request, pk):
         debt.delete()
         return JsonResponse({'success': True})  # إرجاع استجابة JSON بعد الحذف
     return JsonResponse({'success': False}, status=400)
+
+@csrf_exempt
+def delete_payment(request, pk):
+    if request.method == 'POST':
+        payment = get_object_or_404(Paymnet, pk=pk)
+        payment.delete()
+        return JsonResponse({'success': True})  # إرجاع استجابة JSON بعد الحذف
+    return JsonResponse({'success': False}, status=400)
+
+
 @csrf_exempt
 def delete_customer(request, customer_id):
     try:
@@ -446,7 +456,7 @@ def update_payment(request, id):
         try:
             # الحصول على بيانات الطلب
             data = json.loads(request.body)
-            payment = Payment.objects.get(id=id)
+            payment = Paymnet.objects.get(id=id)
 
             # تحديث البيانات
             payment.payment_type = data.get('payment_type', payment.payment_type)
